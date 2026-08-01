@@ -149,13 +149,25 @@ button:disabled {
 /* —— Idle —— */
 .idle {
   justify-content: center;
+  align-items: center;
 }
 
 .idle-compose {
   width: min(100%, 28rem);
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: var(--space-xl);
+  text-align: center;
+}
+
+.idle-compose .prefs-block {
+  width: 100%;
+  text-align: left;
+}
+
+.idle .btn-primary {
+  align-self: center;
 }
 
 .prefs-block {
