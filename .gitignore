@@ -23,5 +23,6 @@ dist-ssr
 *.sln
 *.sw?
 
+# Local agent / worktree scratch (not source)
 .worktrees/
 .superpowers/
