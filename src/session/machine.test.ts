@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { createInitialState, reduce, remainingMs } from './machine'
+import { createInitialState, elapsedMs, reduce, remainingMs } from './machine'
 import type { SessionPrefs } from './types'
 
 const prefs: SessionPrefs = {
@@ -18,6 +18,23 @@ describe('session machine', () => {
     expect(s1.phase).toBe('playing')
     expect(s1.mode).toBe('continuous')
     expect(s1.deadlineAt).toBeNull()
+    expect(s1.elapsedOriginAt).toBe(1000)
+  })
+
+  it('tracks continuous elapsed across pause and resume', () => {
+    let s = createInitialState(prefs, 0)
+    s = reduce(s, { type: 'start' }, 0)
+    expect(elapsedMs(s, 5_000)).toBe(5_000)
+    s = reduce(s, { type: 'pause' }, 5_000)
+    expect(elapsedMs(s, 8_000)).toBe(5_000)
+    s = reduce(s, { type: 'resume' }, 10_000)
+    expect(elapsedMs(s, 12_000)).toBe(7_000)
+  })
+
+  it('elapsedMs is null in pomodoro', () => {
+    let s = createInitialState({ ...prefs, pomodoroEnabled: true }, 0)
+    s = reduce(s, { type: 'start' }, 0)
+    expect(elapsedMs(s, 1000)).toBeNull()
   })
 
   it('starts pomodoro in work with deadline', () => {
@@ -77,6 +94,8 @@ describe('session machine', () => {
     expect(s.phase).toBe('playing')
     expect(s.mode).toBe('continuous')
     expect(s.deadlineAt).toBeNull()
+    expect(s.elapsedOriginAt).toBe(5000)
+    expect(elapsedMs(s, 8000)).toBe(3000)
   })
 
   it('remainingMs is null in continuous playing', () => {

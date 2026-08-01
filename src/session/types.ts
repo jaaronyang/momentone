@@ -22,6 +22,10 @@ export interface SessionState {
   pausedRemainingMs: number | null
   /** Phase to restore on resume when paused from work/break/playing */
   resumePhase: 'playing' | 'work' | 'break' | null
+  /** Wall-clock origin for continuous elapsed; elapsed = now - origin while playing */
+  elapsedOriginAt: number | null
+  /** Elapsed ms captured when pausing continuous play */
+  pausedElapsedMs: number | null
 }
 
 export type SessionEvent =

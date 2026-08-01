@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { AudioEngine } from '../audio/engine'
-import { createInitialState, reduce, remainingMs } from '../session/machine'
+import { createInitialState, elapsedMs, reduce, remainingMs } from '../session/machine'
 import { loadPrefs, savePrefs } from '../session/prefs'
 import type { SessionEvent, SessionPrefs, SessionState } from '../session/types'
 import { ActiveView } from '../ui/ActiveView'
@@ -54,9 +54,15 @@ export function App() {
     engine.setDucking(session.phase === 'break')
   }, [session.phase])
 
-  // Pomodoro tick + display clock
+  // Pomodoro tick + continuous elapsed display clock
   useEffect(() => {
-    if (session.phase !== 'work' && session.phase !== 'break') return
+    if (
+      session.phase !== 'work' &&
+      session.phase !== 'break' &&
+      session.phase !== 'playing'
+    ) {
+      return
+    }
     const id = window.setInterval(() => {
       const at = Date.now()
       setNow(at)
@@ -203,6 +209,7 @@ export function App() {
     <ActiveView
       session={session}
       remainingMs={remainingMs(session, now)}
+      elapsedMs={elapsedMs(session, now)}
       onPause={handlePause}
       onResume={handleResume}
       onSkip={handleSkip}

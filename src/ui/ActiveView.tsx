@@ -3,6 +3,7 @@ import type { SessionPrefs, SessionState, TexturePreset } from '../session/types
 export interface ActiveViewProps {
   session: SessionState
   remainingMs: number | null
+  elapsedMs: number | null
   onPause: () => void
   onResume: () => void
   onSkip: () => void
@@ -16,6 +17,7 @@ const TEXTURES: TexturePreset[] = ['soft', 'standard', 'strong']
 export function ActiveView({
   session,
   remainingMs,
+  elapsedMs,
   onPause,
   onResume,
   onSkip,
@@ -31,17 +33,19 @@ export function ActiveView({
   return (
     <main className="shell active">
       <div className="active-compose">
-        {isPomodoro && (
+        {isPomodoro ? (
           <div className="timer-block">
             <p className="phase-label" aria-live="polite">
               {phaseLabel}
             </p>
-            <p className="timer-display">{formatMs(remainingMs)}</p>
+            <p className="timer-display">{formatCountdown(remainingMs)}</p>
           </div>
-        )}
-
-        {!isPomodoro && (
-          <p className="continuous-status">{isPaused ? 'Paused' : 'Playing'}</p>
+        ) : (
+          <div className="timer-block">
+            <p className="timer-display" aria-live="polite">
+              {formatElapsed(elapsedMs)}
+            </p>
+          </div>
         )}
 
         <div className="transport">
@@ -125,9 +129,19 @@ function pomodoroPhaseLabel(session: SessionState): string {
   return 'Work'
 }
 
-function formatMs(ms: number | null): string {
+function formatCountdown(ms: number | null): string {
   if (ms == null) return '--:--'
   const totalSec = Math.max(0, Math.ceil(ms / 1000))
+  return formatClock(totalSec)
+}
+
+function formatElapsed(ms: number | null): string {
+  if (ms == null) return '--:--'
+  const totalSec = Math.max(0, Math.floor(ms / 1000))
+  return formatClock(totalSec)
+}
+
+function formatClock(totalSec: number): string {
   const m = Math.floor(totalSec / 60)
   const s = totalSec % 60
   return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`

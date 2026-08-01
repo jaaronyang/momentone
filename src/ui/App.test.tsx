@@ -56,7 +56,7 @@ describe('App idle Start', () => {
 
     await user.click(screen.getByRole('button', { name: 'Start' }))
 
-    expect(await screen.findByText('Playing')).toBeTruthy()
+    expect(await screen.findByText('00:00')).toBeTruthy()
     expect(screen.queryByRole('button', { name: 'Start' })).toBeNull()
     expect(screen.getByRole('button', { name: 'Pause' })).toBeTruthy()
   })
@@ -91,10 +91,10 @@ describe('App idle Start', () => {
     render(<App />)
 
     await user.click(screen.getByRole('button', { name: 'Start' }))
-    expect(await screen.findByText('Playing')).toBeTruthy()
+    expect(await screen.findByText('00:00')).toBeTruthy()
 
     await user.click(screen.getByRole('button', { name: 'Pause' }))
-    expect(await screen.findByText('Paused')).toBeTruthy()
+    expect(await screen.findByRole('button', { name: 'Resume' })).toBeTruthy()
 
     calls.length = 0
     await user.click(screen.getByLabelText('Pomodoro'))
@@ -116,6 +116,6 @@ describe('App idle Start', () => {
     const alert = await screen.findByRole('alert')
     expect(alert.textContent).toMatch(/try again/i)
     expect(screen.getByRole('button', { name: 'Start' })).toBeTruthy()
-    expect(screen.queryByText('Playing')).toBeNull()
+    expect(screen.queryByText('00:00')).toBeNull()
   })
 })

@@ -8,6 +8,8 @@ export function createInitialState(prefs: SessionPrefs, _now: number): SessionSt
     deadlineAt: null,
     pausedRemainingMs: null,
     resumePhase: null,
+    elapsedOriginAt: null,
+    pausedElapsedMs: null,
   }
 }
 
@@ -22,6 +24,18 @@ export function remainingMs(state: SessionState, now: number): number | null {
   if (state.phase === 'paused') return state.pausedRemainingMs
   if (state.deadlineAt == null) return null
   return Math.max(0, state.deadlineAt - now)
+}
+
+/** Elapsed play time for continuous mode; null in Pomodoro / idle. */
+export function elapsedMs(state: SessionState, now: number): number | null {
+  if (state.mode !== 'continuous') return null
+  if (state.phase === 'paused' && state.resumePhase === 'playing') {
+    return state.pausedElapsedMs ?? 0
+  }
+  if (state.phase === 'playing' && state.elapsedOriginAt != null) {
+    return Math.max(0, now - state.elapsedOriginAt)
+  }
+  return null
 }
 
 export function reduce(state: SessionState, event: SessionEvent, now: number): SessionState {
@@ -41,6 +55,8 @@ export function reduce(state: SessionState, event: SessionEvent, now: number): S
           deadlineAt: now + workMs(state.prefs),
           pausedRemainingMs: null,
           resumePhase: null,
+          elapsedOriginAt: null,
+          pausedElapsedMs: null,
         }
       }
       return {
@@ -50,20 +66,35 @@ export function reduce(state: SessionState, event: SessionEvent, now: number): S
         deadlineAt: null,
         pausedRemainingMs: null,
         resumePhase: null,
+        elapsedOriginAt: now,
+        pausedElapsedMs: null,
       }
     }
     case 'pause': {
       if (state.phase !== 'playing' && state.phase !== 'work' && state.phase !== 'break') {
         return state
       }
-      const rem =
-        state.phase === 'playing' ? null : remainingMs(state, now)
+      if (state.phase === 'playing') {
+        const elapsed =
+          state.elapsedOriginAt != null ? Math.max(0, now - state.elapsedOriginAt) : 0
+        return {
+          ...state,
+          phase: 'paused',
+          pausedRemainingMs: null,
+          pausedElapsedMs: elapsed,
+          resumePhase: 'playing',
+          deadlineAt: null,
+          elapsedOriginAt: null,
+        }
+      }
       return {
         ...state,
         phase: 'paused',
-        pausedRemainingMs: rem,
+        pausedRemainingMs: remainingMs(state, now),
         resumePhase: state.phase,
         deadlineAt: null,
+        elapsedOriginAt: null,
+        pausedElapsedMs: null,
       }
     }
     case 'resume': {
@@ -75,6 +106,8 @@ export function reduce(state: SessionState, event: SessionEvent, now: number): S
           deadlineAt: null,
           pausedRemainingMs: null,
           resumePhase: null,
+          elapsedOriginAt: now - (state.pausedElapsedMs ?? 0),
+          pausedElapsedMs: null,
         }
       }
       const rem = state.pausedRemainingMs ?? 0
@@ -84,6 +117,8 @@ export function reduce(state: SessionState, event: SessionEvent, now: number): S
         deadlineAt: now + rem,
         pausedRemainingMs: null,
         resumePhase: null,
+        elapsedOriginAt: null,
+        pausedElapsedMs: null,
       }
     }
     case 'reset':
@@ -146,17 +181,34 @@ export function reduce(state: SessionState, event: SessionEvent, now: number): S
           deadlineAt: now + workMs(prefs),
           pausedRemainingMs: null,
           resumePhase: null,
+          elapsedOriginAt: null,
+          pausedElapsedMs: null,
         }
       }
-      // Disable: continuous at work level
+      // Disable: continuous at work level; start elapsed fresh
+      if (state.phase === 'paused') {
+        return {
+          ...state,
+          prefs,
+          mode: 'continuous',
+          phase: 'paused',
+          deadlineAt: null,
+          pausedRemainingMs: null,
+          resumePhase: 'playing',
+          elapsedOriginAt: null,
+          pausedElapsedMs: 0,
+        }
+      }
       return {
         ...state,
         prefs,
         mode: 'continuous',
-        phase: state.phase === 'paused' ? 'paused' : 'playing',
+        phase: 'playing',
         deadlineAt: null,
         pausedRemainingMs: null,
-        resumePhase: state.phase === 'paused' ? 'playing' : null,
+        resumePhase: null,
+        elapsedOriginAt: now,
+        pausedElapsedMs: null,
       }
     }
     default:

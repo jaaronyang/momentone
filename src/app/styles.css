@@ -211,15 +211,6 @@ button:disabled {
   font-variant-numeric: tabular-nums;
 }
 
-.continuous-status {
-  margin: 0;
-  text-align: center;
-  font-size: var(--text-display-md-size);
-  font-weight: 400;
-  letter-spacing: var(--text-display-md-tracking);
-  color: var(--color-body);
-}
-
 .transport {
   display: flex;
   flex-wrap: wrap;
