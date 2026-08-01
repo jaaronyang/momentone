@@ -22,8 +22,10 @@ Open the local URL, press **Start** (required for browser audio), and adjust vol
 
 ## Deploy
 
+GitHub Pages is configured via `.github/workflows/deploy.yml`. After pushing `main`, enable **Settings → Pages → Source: GitHub Actions**. Site: https://jaaronyang.github.io/momentone/
+
 ```bash
 npm run build
 ```
 
-Host the `dist/` folder on any static HTTPS host (Cloudflare Pages or Vercel free tier both work). No environment variables required.
+`dist/` also works on any static HTTPS host. No environment variables required. Vite `base` is `/momentone/` for project Pages — change to `/` if you move to a custom root domain.

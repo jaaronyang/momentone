@@ -16,4 +16,4 @@
 - Audio (`src/audio`) requires a real browser + user gesture; do not expect Tone to fully run in Vitest/jsdom
 - Background-tab Pomodoro catch-up (visibility + tick) is best-effort; timers may drift while the tab is heavily throttled — known limitation
 - No backend or env vars for v1
-- Deploy: static `dist/` to Cloudflare Pages or Vercel
+- Deploy: GitHub Pages via `.github/workflows/deploy.yml` (Vite `base` is `/momentone/`)
