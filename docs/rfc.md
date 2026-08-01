@@ -86,7 +86,7 @@ src/
 
 **Start policy:** AudioContext / Tone starts only after an explicit user gesture (`Start`).
 
-### 4.3 Extension: curated beds (v1.5+)
+### 4.3 Extension: curated beds (v1.1+)
 
 - Add `SampleBed` (Tone `Player` / grain player) feeding the **same** FX bus.
 - Host a few seamless loops under `public/beds/*` on the static host.
@@ -117,7 +117,7 @@ Events: `start`, `pause`, `resume`, `setPomodoro(on/off)`, `skipPhase` (Pomodoro
 
 When Pomodoro is enabled mid-session: enter `work` with a fresh work duration (or remaining policy decided in implementation — prefer fresh work block). When disabled mid-session: leave break/work timer, keep audio playing in continuous mode at work level.
 
-Defaults when Pomodoro is on: work **25m**, break **5m** (from prefs). Persist prefs via `localStorage` in the UI layer.
+Defaults when Pomodoro is on: work **25m**, break **5m** (from prefs). Persist prefs (Pomodoro on/off, durations, volume, modulation, texture) via `localStorage` in the UI layer — implementation detail for the product requirement that prefs survive reload.
 
 **Timer accuracy (Pomodoro only):** Prefer wall-clock deadlines (`Date.now()` + duration) over `setInterval` alone so background-tab throttling drifts less. Reconcile on `visibilitychange`. Document remaining Safari/Chrome quirks as known limitations for the demo.
 

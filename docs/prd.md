@@ -58,7 +58,7 @@ Starting and sustaining deep work is hard for many people, and especially hard w
 5. When Pomodoro is on and a work block ends, I get a clear phase change and the audio becomes quieter for the break (same texture).
 6. When a break ends, work intensity returns and the next work block starts.
 7. As a user, I can pause/resume; when Pomodoro is on, I can also skip to the next phase.
-8. As a returning user on the same browser, my prefs (including Pomodoro on/off) are remembered (`localStorage`).
+8. As a returning user on the same browser, my prefs (including Pomodoro on/off) are remembered.
 
 ## 7. Primary flows
 
@@ -87,7 +87,7 @@ Starting and sustaining deep work is hard for many people, and especially hard w
 | F5 | Generative in-browser focus soundscape (no media library required for v1) |
 | F6 | Controls: play/pause, master volume, modulation depth; optional Soft / Standard / Strong texture preset; skip phase only when Pomodoro is on |
 | F7 | When Pomodoro break is active: same graph, quieter (not silence, not a second mode) |
-| F8 | Persist prefs in `localStorage` (including Pomodoro on/off) |
+| F8 | Persist prefs across visits on the same browser (including Pomodoro on/off) |
 | F9 | Deploy as a static site; no auth |
 | F10 | Clear message if Web Audio is unsupported |
 | F11 | Product copy must not claim medical treatment or guaranteed clinical outcomes |
@@ -97,7 +97,7 @@ Starting and sustaining deep work is hard for many people, and especially hard w
 | Phase | Audio source | Notes |
 |-------|--------------|--------|
 | **v1** | Procedural / generative (in-browser) | Free; infinite sessions; iterate by ear |
-| **v1.5 (optional)** | A few curated seamless loops as static files | Free RF packs or self-made files under `/public/beds/`; **no backend required** for a small set |
+| **v1.1 (optional)** | A few curated seamless loops as static files | Free RF packs or self-made files under `/public/beds/`; **no backend required** for a small set |
 | **Later (optional)** | AI-assisted beds (e.g. paid Suno) | Only if desired; still can host as static assets until scale demands otherwise |
 
 ## 10. Research positioning (product-level)
@@ -133,7 +133,7 @@ Starting and sustaining deep work is hard for many people, and especially hard w
 | Version | Scope |
 |---------|--------|
 | **v1** | Generative Focus + optional Pomodoro + static deploy (workshop demo) |
-| **v1.5** | Optional static curated beds into the same FX path |
+| **v1.1** | Optional static curated beds into the same FX path |
 | **Later** | Extra modes, auth, paid AI content, native — only if product direction expands |
 
 ## 13. Open questions (non-blocking)
