@@ -315,9 +315,21 @@ button:disabled {
   align-self: flex-start;
 }
 
-.btn-primary:hover {
+.btn-primary:hover:not(:disabled) {
   background: var(--color-primary-active);
   border-color: var(--color-primary-active);
+}
+
+.btn-primary:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.start-error {
+  margin: calc(-1 * var(--space-base)) 0 0;
+  color: var(--color-semantic-error, #cf2d56);
+  font-size: var(--text-body-sm-size, 14px);
+  line-height: 1.4;
 }
 
 .btn-secondary {

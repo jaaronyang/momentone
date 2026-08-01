@@ -2,12 +2,21 @@ import type { SessionPrefs, SessionState } from '../session/types'
 
 export interface IdleViewProps {
   session: SessionState
+  starting?: boolean
+  startError?: string | null
   onStart: () => void
   onSetPomodoro: (enabled: boolean) => void
   onSetPrefs: (prefs: Partial<SessionPrefs>) => void
 }
 
-export function IdleView({ session, onStart, onSetPomodoro, onSetPrefs }: IdleViewProps) {
+export function IdleView({
+  session,
+  starting = false,
+  startError = null,
+  onStart,
+  onSetPomodoro,
+  onSetPrefs,
+}: IdleViewProps) {
   const { prefs } = session
 
   return (
@@ -60,9 +69,20 @@ export function IdleView({ session, onStart, onSetPomodoro, onSetPrefs }: IdleVi
           )}
         </div>
 
-        <button type="button" className="btn-primary" onClick={onStart}>
-          Start
+        <button
+          type="button"
+          className="btn-primary"
+          onClick={onStart}
+          disabled={starting}
+          aria-busy={starting}
+        >
+          {starting ? 'Starting…' : 'Start'}
         </button>
+        {startError && (
+          <p className="start-error" role="alert">
+            {startError}
+          </p>
+        )}
       </div>
     </main>
   )

@@ -4,6 +4,9 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { App } from '../app/App'
 
 const calls: string[] = []
+let startImpl: () => Promise<void> = async () => {
+  calls.push('start')
+}
 
 vi.mock('../audio/engine', () => {
   class MockAudioEngine {
@@ -11,7 +14,7 @@ vi.mock('../audio/engine', () => {
       return true
     }
     async start() {
-      calls.push('start')
+      return startImpl()
     }
     stop() {
       calls.push('stop')
@@ -21,6 +24,9 @@ vi.mock('../audio/engine', () => {
     }
     resume() {
       calls.push('resume')
+    }
+    resumeAudioContext() {
+      calls.push('resumeAudioContext')
     }
     setVolume() {}
     setModulationDepth() {}
@@ -36,6 +42,9 @@ describe('App idle Start', () => {
   beforeEach(() => {
     localStorage.clear()
     calls.length = 0
+    startImpl = async () => {
+      calls.push('start')
+    }
   })
 
   it('dispatches start and shows active continuous view', async () => {
@@ -93,5 +102,20 @@ describe('App idle Start', () => {
     expect(await screen.findByText('Work')).toBeTruthy()
     expect(calls).toContain('resume')
     expect(calls.indexOf('duck:false')).toBeLessThan(calls.indexOf('resume'))
+  })
+
+  it('keeps idle and shows retry when start fails', async () => {
+    startImpl = async () => {
+      throw new Error('boom')
+    }
+    const user = userEvent.setup()
+    render(<App />)
+
+    await user.click(screen.getByRole('button', { name: 'Start' }))
+
+    const alert = await screen.findByRole('alert')
+    expect(alert.textContent).toMatch(/try again/i)
+    expect(screen.getByRole('button', { name: 'Start' })).toBeTruthy()
+    expect(screen.queryByText('Playing')).toBeNull()
   })
 })

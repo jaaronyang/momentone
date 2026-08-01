@@ -1,4 +1,4 @@
-import { Gain, dbToGain, start as toneStart } from 'tone'
+import { Gain, dbToGain, getContext, start as toneStart } from 'tone'
 import { SharedFxBus } from './fx'
 import { GenerativeBed } from './generative'
 import { DUCK_DB, DUCK_RAMP_SEC, TEXTURE_PRESETS } from './presets'
@@ -20,6 +20,10 @@ export class AudioEngine {
   private ducking = false
   private paused = false
   private started = false
+  /** In-flight start(); concurrent callers await the same promise. */
+  private startPromise: Promise<void> | null = null
+  /** Bumped on stop() so an in-flight start abandons graph build. */
+  private startEpoch = 0
   private texture: TexturePreset = 'standard'
 
   static isSupported(): boolean {
@@ -36,11 +40,31 @@ export class AudioEngine {
       if (this.paused) this.resume()
       return
     }
+    // Deduplicate concurrent start() before any await so only one graph is built.
+    if (this.startPromise) {
+      return this.startPromise
+    }
     if (!AudioEngine.isSupported()) {
       throw new Error('Web Audio API is not supported in this environment')
     }
 
+    const epoch = this.startEpoch
+    this.startPromise = this.buildGraph(epoch)
+    try {
+      await this.startPromise
+    } finally {
+      this.startPromise = null
+    }
+  }
+
+  private async buildGraph(epoch: number): Promise<void> {
     await toneStart()
+
+    // Abandoned by stop() or another completed start — never double-build.
+    if (epoch !== this.startEpoch || this.started) {
+      if (this.started && this.paused) this.resume()
+      return
+    }
 
     const fx = new SharedFxBus()
     const bed = new GenerativeBed(fx.input, TEXTURE_PRESETS[this.texture])
@@ -65,7 +89,13 @@ export class AudioEngine {
   }
 
   stop(): void {
-    if (!this.started) return
+    this.startEpoch += 1
+    this.startPromise = null
+    if (!this.started && !this.bed && !this.fx && !this.master) {
+      this.paused = false
+      this.ducking = false
+      return
+    }
     this.bed?.stop()
     this.fx?.stop()
     this.bed?.dispose()
@@ -89,6 +119,15 @@ export class AudioEngine {
     if (!this.started || !this.paused) return
     this.paused = false
     this.applyMasterGain(MUTE_RAMP_SEC)
+  }
+
+  /** Resume a suspended AudioContext (e.g. after returning to the tab). */
+  resumeAudioContext(): void {
+    if (!this.started) return
+    const raw = getContext().rawContext
+    if (raw.state === 'suspended') {
+      void raw.resume()
+    }
   }
 
   setVolume(v: number): void {

@@ -13,6 +13,8 @@ export function App() {
     createInitialState(loadPrefs(), Date.now()),
   )
   const [now, setNow] = useState(() => Date.now())
+  const [starting, setStarting] = useState(false)
+  const [startError, setStartError] = useState<string | null>(null)
   const engineRef = useRef<AudioEngine | null>(null)
   const sessionRef = useRef(session)
   sessionRef.current = session
@@ -63,13 +65,19 @@ export function App() {
     return () => window.clearInterval(id)
   }, [session.phase])
 
-  // Reconcile deadline when tab becomes visible again
+  // Reconcile deadline + resume AudioContext when tab becomes visible again
   useEffect(() => {
     const onVisibility = () => {
       if (document.visibilityState !== 'visible') return
       const at = Date.now()
+      const next = reduce(sessionRef.current, { type: 'tick' }, at)
       setNow(at)
-      setSession((prev) => reduce(prev, { type: 'tick' }, at))
+      setSession(next)
+      const audible =
+        next.phase === 'playing' || next.phase === 'work' || next.phase === 'break'
+      if (audible) {
+        engineRef.current?.resumeAudioContext()
+      }
     }
     document.addEventListener('visibilitychange', onVisibility)
     return () => document.removeEventListener('visibilitychange', onVisibility)
@@ -87,14 +95,30 @@ export function App() {
     if (!engine) return
     const current = sessionRef.current
     if (current.phase !== 'idle') return
+    if (starting) return
+
+    setStarting(true)
+    setStartError(null)
     syncEnginePrefs(current.prefs)
-    await engine.start()
-    const at = Date.now()
-    const next = reduce(sessionRef.current, { type: 'start' }, at)
-    engine.setDucking(next.phase === 'break')
-    setNow(at)
-    setSession(next)
-  }, [syncEnginePrefs])
+
+    try {
+      await engine.start()
+      const at = Date.now()
+      const next = reduce(sessionRef.current, { type: 'start' }, at)
+      // If user reset or phase changed while awaiting, stay put and stop audio.
+      if (sessionRef.current.phase !== 'idle') {
+        engine.stop()
+        return
+      }
+      engine.setDucking(next.phase === 'break')
+      setNow(at)
+      setSession(next)
+    } catch {
+      setStartError("Couldn't start audio. Try again.")
+    } finally {
+      setStarting(false)
+    }
+  }, [starting, syncEnginePrefs])
 
   const handlePause = useCallback(() => {
     engineRef.current?.pause()
@@ -164,6 +188,8 @@ export function App() {
     return (
       <IdleView
         session={session}
+        starting={starting}
+        startError={startError}
         onStart={() => {
           void handleStart()
         }}

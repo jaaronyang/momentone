@@ -39,8 +39,10 @@ export function ActiveView({
 
       <div className="active-compose">
         {isPomodoro && (
-          <div className="timer-block" aria-live="polite">
-            <p className="phase-label">{phaseLabel}</p>
+          <div className="timer-block">
+            <p className="phase-label" aria-live="polite">
+              {phaseLabel}
+            </p>
             <p className="timer-display">{formatMs(remainingMs)}</p>
           </div>
         )}
