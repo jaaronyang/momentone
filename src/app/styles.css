@@ -1,60 +1,68 @@
-/* DESIGN.md tokens — Cursor-design-analysis */
+/* DESIGN.md tokens — Apple-design-analysis */
 :root {
   /* colors */
-  --color-primary: #f54e00;
-  --color-primary-active: #d04200;
-  --color-ink: #26251e;
-  --color-body: #5a5852;
-  --color-body-strong: #26251e;
-  --color-muted: #807d72;
-  --color-muted-soft: #a09c92;
-  --color-hairline: #e6e5e0;
-  --color-hairline-soft: #efeee8;
-  --color-hairline-strong: #cfcdc4;
-  --color-canvas: #f7f7f4;
-  --color-canvas-soft: #fafaf7;
-  --color-surface-card: #ffffff;
-  --color-surface-strong: #e6e5e0;
+  --color-primary: #0066cc;
+  --color-primary-focus: #0071e3;
+  --color-primary-on-dark: #2997ff;
+  --color-ink: #1d1d1f;
+  --color-body: #1d1d1f;
+  --color-body-on-dark: #ffffff;
+  --color-body-muted: #cccccc;
+  --color-ink-muted-80: #333333;
+  --color-ink-muted-48: #7a7a7a;
+  --color-divider-soft: #f0f0f0;
+  --color-hairline: #e0e0e0;
+  --color-canvas: #ffffff;
+  --color-canvas-parchment: #f5f5f7;
+  --color-surface-pearl: #fafafc;
+  --color-surface-tile-1: #272729;
+  --color-surface-black: #000000;
+  --color-surface-chip: #d2d2d7;
   --color-on-primary: #ffffff;
+  --color-on-dark: #ffffff;
+  /* pragmatic alert (not in DESIGN.md surfaces) */
   --color-semantic-error: #cf2d56;
-  --color-semantic-success: #1f8a65;
 
   /* typography */
-  --font-sans: 'CursorGothic', system-ui, 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+  --font-display: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-text: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 
-  --text-display-mega-size: 72px;
-  --text-display-mega-tracking: -2.16px;
-  --text-display-lg-size: 36px;
-  --text-display-lg-tracking: -0.72px;
-  --text-display-md-size: 26px;
-  --text-display-md-tracking: -0.325px;
-  --text-display-sm-size: 22px;
-  --text-body-md-size: 16px;
-  --text-body-sm-size: 14px;
-  --text-caption-size: 13px;
-  --text-caption-upper-size: 11px;
-  --text-caption-upper-tracking: 0.88px;
-  --text-button-size: 14px;
+  --text-hero-size: 56px;
+  --text-hero-tracking: -0.28px;
+  --text-display-lg-size: 40px;
+  --text-display-md-size: 34px;
+  --text-display-md-tracking: -0.374px;
+  --text-lead-size: 28px;
+  --text-lead-tracking: 0.196px;
+  --text-lead-airy-size: 24px;
+  --text-tagline-size: 21px;
+  --text-tagline-tracking: 0.231px;
+  --text-body-size: 17px;
+  --text-body-tracking: -0.374px;
+  --text-caption-size: 14px;
+  --text-caption-tracking: -0.224px;
+  --text-button-large-size: 18px;
+  --text-fine-print-size: 12px;
+  --text-fine-print-tracking: -0.12px;
 
   /* spacing */
   --space-xxs: 4px;
   --space-xs: 8px;
   --space-sm: 12px;
-  --space-base: 16px;
-  --space-md: 20px;
+  --space-md: 17px;
   --space-lg: 24px;
   --space-xl: 32px;
   --space-xxl: 48px;
   --space-section: 80px;
 
   /* radius */
-  --radius-xs: 4px;
-  --radius-sm: 6px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
-  --radius-xl: 16px;
+  --radius-none: 0px;
+  --radius-xs: 5px;
+  --radius-sm: 8px;
+  --radius-md: 11px;
+  --radius-lg: 18px;
   --radius-pill: 9999px;
+  --radius-full: 9999px;
 }
 
 *,
@@ -71,12 +79,13 @@ body,
 
 body {
   margin: 0;
-  font-family: var(--font-sans);
-  font-size: var(--text-body-md-size);
+  font-family: var(--font-text);
+  font-size: var(--text-body-size);
   font-weight: 400;
-  line-height: 1.5;
+  line-height: 1.47;
+  letter-spacing: var(--text-body-tracking);
   color: var(--color-ink);
-  background: var(--color-canvas);
+  background: var(--color-canvas-parchment);
   -webkit-font-smoothing: antialiased;
 }
 
@@ -92,7 +101,8 @@ button {
 }
 
 button:disabled {
-  opacity: 0.45;
+  color: var(--color-ink-muted-48);
+  opacity: 1;
   cursor: not-allowed;
 }
 
@@ -113,28 +123,31 @@ button:disabled {
 /* —— Brand —— */
 .brand {
   margin: 0;
-  font-family: var(--font-sans);
-  font-size: clamp(2.5rem, 8vw, var(--text-display-mega-size));
-  font-weight: 400;
-  line-height: 1.1;
-  letter-spacing: var(--text-display-mega-tracking);
-  color: var(--color-primary);
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 7vw, var(--text-hero-size));
+  font-weight: 600;
+  line-height: 1.07;
+  letter-spacing: var(--text-hero-tracking);
+  color: var(--color-ink);
 }
 
 .purpose {
-  margin: var(--space-base) 0 0;
+  margin: var(--space-md) 0 0;
   max-width: 28rem;
-  font-size: var(--text-display-sm-size);
+  font-family: var(--font-display);
+  font-size: clamp(1.25rem, 3.5vw, var(--text-lead-size));
   font-weight: 400;
-  line-height: 1.3;
-  letter-spacing: -0.11px;
-  color: var(--color-body);
+  line-height: 1.14;
+  letter-spacing: var(--text-lead-tracking);
+  color: var(--color-ink);
 }
 
 .hint {
-  margin: var(--space-base) 0 0;
-  color: var(--color-muted);
-  font-size: var(--text-body-sm-size);
+  margin: var(--space-md) 0 0;
+  color: var(--color-ink-muted-48);
+  font-size: var(--text-caption-size);
+  line-height: 1.43;
+  letter-spacing: var(--text-caption-tracking);
 }
 
 /* —— Idle —— */
@@ -164,15 +177,15 @@ button:disabled {
 .prefs-block {
   display: flex;
   flex-direction: column;
-  gap: var(--space-base);
-  padding-top: var(--space-base);
+  gap: var(--space-md);
+  padding-top: var(--space-md);
   border-top: 1px solid var(--color-hairline);
 }
 
 .duration-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: var(--space-base);
+  gap: var(--space-md);
 }
 
 /* —— Active —— */
@@ -192,21 +205,21 @@ button:disabled {
 
 .phase-label {
   margin: 0 0 var(--space-xs);
-  font-size: var(--text-caption-upper-size);
+  font-family: var(--font-text);
+  font-size: var(--text-caption-size);
   font-weight: 600;
-  line-height: 1.4;
-  letter-spacing: var(--text-caption-upper-tracking);
-  text-transform: uppercase;
-  color: var(--color-muted);
+  line-height: 1.29;
+  letter-spacing: var(--text-caption-tracking);
+  color: var(--color-ink-muted-48);
 }
 
 .timer-display {
   margin: 0;
-  font-family: var(--font-mono);
-  font-size: clamp(3rem, 12vw, 4.5rem);
-  font-weight: 400;
-  line-height: 1;
-  letter-spacing: -0.04em;
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 12vw, var(--text-hero-size));
+  font-weight: 600;
+  line-height: 1.07;
+  letter-spacing: var(--text-hero-tracking);
   color: var(--color-ink);
   font-variant-numeric: tabular-nums;
 }
@@ -221,7 +234,7 @@ button:disabled {
 .controls {
   display: flex;
   flex-direction: column;
-  gap: var(--space-base);
+  gap: var(--space-md);
   padding-top: var(--space-lg);
   border-top: 1px solid var(--color-hairline);
 }
@@ -232,8 +245,9 @@ button:disabled {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--space-base);
-  font-size: var(--text-body-sm-size);
+  gap: var(--space-md);
+  font-size: var(--text-body-size);
+  letter-spacing: var(--text-body-tracking);
   color: var(--color-ink);
 }
 
@@ -254,23 +268,27 @@ button:disabled {
   flex-direction: column;
   gap: var(--space-xxs);
   font-size: var(--text-caption-size);
-  color: var(--color-muted);
+  font-weight: 400;
+  line-height: 1.43;
+  letter-spacing: var(--text-caption-tracking);
+  color: var(--color-ink-muted-48);
 }
 
 .field input[type='number'],
 .field select {
   height: 44px;
-  padding: 12px 16px;
-  border: 1px solid var(--color-hairline);
-  border-radius: var(--radius-md);
-  background: var(--color-surface-card);
+  padding: 12px 20px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: var(--radius-pill);
+  background: var(--color-canvas);
   color: var(--color-ink);
-  font-size: var(--text-body-md-size);
+  font-size: var(--text-body-size);
+  letter-spacing: var(--text-body-tracking);
 }
 
 .field input[type='number']:focus,
 .field select:focus {
-  outline: 2px solid var(--color-primary);
+  outline: 2px solid var(--color-primary-focus);
   outline-offset: 1px;
 }
 
@@ -284,49 +302,63 @@ button:disabled {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  height: 40px;
-  padding: 10px 18px;
-  border-radius: var(--radius-md);
-  font-size: var(--text-button-size);
-  font-weight: 500;
-  line-height: 1;
+  min-height: 44px;
   border: 1px solid transparent;
-  transition: background-color 120ms ease, border-color 120ms ease;
+  line-height: 1;
+  transition: transform 120ms ease;
+}
+
+.btn-primary:active:not(:disabled),
+.btn-secondary:active:not(:disabled) {
+  transform: scale(0.95);
 }
 
 .btn-primary {
+  padding: 11px 22px;
+  border-radius: var(--radius-pill);
   background: var(--color-primary);
   color: var(--color-on-primary);
   border-color: var(--color-primary);
+  font-size: var(--text-body-size);
+  font-weight: 400;
+  letter-spacing: var(--text-body-tracking);
   align-self: flex-start;
 }
 
-.btn-primary:hover:not(:disabled) {
-  background: var(--color-primary-active);
-  border-color: var(--color-primary-active);
+.btn-primary:focus-visible {
+  outline: 2px solid var(--color-primary-focus);
+  outline-offset: 2px;
 }
 
 .btn-primary:disabled {
-  opacity: 0.65;
+  opacity: 0.45;
+  color: var(--color-on-primary);
   cursor: not-allowed;
 }
 
 .start-error {
-  margin: calc(-1 * var(--space-base)) 0 0;
-  color: var(--color-semantic-error, #cf2d56);
-  font-size: var(--text-body-sm-size, 14px);
-  line-height: 1.4;
+  margin: calc(-1 * var(--space-md)) 0 0;
+  color: var(--color-semantic-error);
+  font-size: var(--text-caption-size);
+  line-height: 1.43;
+  letter-spacing: var(--text-caption-tracking);
 }
 
 .btn-secondary {
-  background: var(--color-surface-card);
-  color: var(--color-ink);
-  border-color: var(--color-hairline);
-  padding: 9px 17px;
+  padding: 8px 14px;
+  min-height: 40px;
+  border-radius: var(--radius-md);
+  background: var(--color-surface-pearl);
+  color: var(--color-ink-muted-80);
+  border: 3px solid var(--color-divider-soft);
+  font-size: var(--text-caption-size);
+  font-weight: 400;
+  letter-spacing: var(--text-caption-tracking);
 }
 
-.btn-secondary:hover {
-  border-color: var(--color-hairline-strong);
+.btn-secondary:focus-visible {
+  outline: 2px solid var(--color-primary-focus);
+  outline-offset: 2px;
 }
 
 .transport .btn-primary,
@@ -340,7 +372,9 @@ button:disabled {
 }
 
 .unsupported .purpose {
-  font-size: var(--text-body-md-size);
-  letter-spacing: 0;
-  line-height: 1.5;
+  font-family: var(--font-text);
+  font-size: var(--text-body-size);
+  font-weight: 400;
+  letter-spacing: var(--text-body-tracking);
+  line-height: 1.47;
 }
