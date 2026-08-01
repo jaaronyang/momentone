@@ -36,7 +36,9 @@ export function IdleView({ session, onStart, onSetPomodoro, onSetPrefs }: IdleVi
                   max={180}
                   value={prefs.workMinutes}
                   onChange={(e) =>
-                    onSetPrefs({ workMinutes: clampMinutes(e.target.value, prefs.workMinutes) })
+                    onSetPrefs({
+                      workMinutes: clampMinutes(e.target.value, prefs.workMinutes, 180),
+                    })
                   }
                 />
               </label>
@@ -48,7 +50,9 @@ export function IdleView({ session, onStart, onSetPomodoro, onSetPrefs }: IdleVi
                   max={60}
                   value={prefs.breakMinutes}
                   onChange={(e) =>
-                    onSetPrefs({ breakMinutes: clampMinutes(e.target.value, prefs.breakMinutes) })
+                    onSetPrefs({
+                      breakMinutes: clampMinutes(e.target.value, prefs.breakMinutes, 60),
+                    })
                   }
                 />
               </label>
@@ -64,8 +68,8 @@ export function IdleView({ session, onStart, onSetPomodoro, onSetPrefs }: IdleVi
   )
 }
 
-function clampMinutes(raw: string, fallback: number): number {
+function clampMinutes(raw: string, fallback: number, max: number): number {
   const n = Number.parseInt(raw, 10)
   if (!Number.isFinite(n) || n < 1) return fallback
-  return n
+  return Math.min(max, n)
 }

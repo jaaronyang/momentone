@@ -102,7 +102,12 @@ export function App() {
   }, [applySession])
 
   const handleResume = useCallback(() => {
-    engineRef.current?.resume()
+    const engine = engineRef.current
+    const current = sessionRef.current
+    if (current.phase !== 'paused') return
+    // Duck before audio returns so break resume isn't a full-volume flash
+    engine?.setDucking(current.resumePhase === 'break')
+    engine?.resume()
     applySession({ type: 'resume' })
   }, [applySession])
 
@@ -115,16 +120,38 @@ export function App() {
     applySession({ type: 'reset' })
   }, [applySession])
 
-  const handleSetPomodoro = useCallback(
-    (enabled: boolean) => {
-      applySession({ type: 'setPomodoro', enabled })
-    },
-    [applySession],
-  )
+  const handleSetPomodoro = useCallback((enabled: boolean) => {
+    const at = Date.now()
+    const prev = sessionRef.current
+    const next = reduce(prev, { type: 'setPomodoro', enabled }, at)
+    const engine = engineRef.current
+    if (engine) {
+      engine.setDucking(next.phase === 'break')
+      const audible =
+        next.phase === 'work' || next.phase === 'break' || next.phase === 'playing'
+      if (prev.phase === 'paused' && audible) {
+        engine.resume()
+      } else if (next.phase === 'paused' && prev.phase !== 'paused') {
+        engine.pause()
+      }
+    }
+    if (next.prefs !== prev.prefs) {
+      savePrefs(next.prefs)
+    }
+    setNow(at)
+    setSession(next)
+  }, [])
 
   const handleSetPrefs = useCallback(
     (prefs: Partial<SessionPrefs>) => {
-      applySession({ type: 'setPrefs', prefs })
+      const clamped: Partial<SessionPrefs> = { ...prefs }
+      if (clamped.workMinutes != null) {
+        clamped.workMinutes = Math.min(180, Math.max(1, clamped.workMinutes))
+      }
+      if (clamped.breakMinutes != null) {
+        clamped.breakMinutes = Math.min(60, Math.max(1, clamped.breakMinutes))
+      }
+      applySession({ type: 'setPrefs', prefs: clamped })
     },
     [applySession],
   )
