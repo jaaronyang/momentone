@@ -239,6 +239,81 @@ button:disabled {
   border-top: 1px solid var(--color-hairline);
 }
 
+/* —— Sound wave (decorative) —— */
+.sound-wave {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  height: 28px;
+  margin: 0;
+}
+
+.sound-wave__bar {
+  display: block;
+  width: 3px;
+  height: 100%;
+  border-radius: var(--radius-xs);
+  background: var(--color-ink-muted-48);
+  transform-origin: center center;
+  transform: scaleY(0.28);
+}
+
+.sound-wave.is-active .sound-wave__bar {
+  animation-name: sound-wave-pulse;
+  animation-duration: 1.05s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+.sound-wave.is-active .sound-wave__bar:nth-child(1) {
+  animation-delay: 0ms;
+}
+.sound-wave.is-active .sound-wave__bar:nth-child(2) {
+  animation-delay: 120ms;
+}
+.sound-wave.is-active .sound-wave__bar:nth-child(3) {
+  animation-delay: 240ms;
+}
+.sound-wave.is-active .sound-wave__bar:nth-child(4) {
+  animation-delay: 180ms;
+}
+.sound-wave.is-active .sound-wave__bar:nth-child(5) {
+  animation-delay: 60ms;
+}
+
+.sound-wave.is-active.is-break .sound-wave__bar {
+  animation-name: sound-wave-pulse-break;
+  animation-duration: 1.8s;
+}
+
+@keyframes sound-wave-pulse {
+  0%,
+  100% {
+    transform: scaleY(0.28);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes sound-wave-pulse-break {
+  0%,
+  100% {
+    transform: scaleY(0.22);
+  }
+  50% {
+    transform: scaleY(0.55);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sound-wave.is-active .sound-wave__bar {
+    animation: none;
+    transform: scaleY(0.28);
+  }
+}
+
 /* —— Form controls —— */
 .toggle-row,
 .slider-row {

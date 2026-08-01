@@ -1,4 +1,5 @@
 import type { SessionPrefs, SessionState, TexturePreset } from '../session/types'
+import { SoundWave } from './SoundWave'
 
 export interface ActiveViewProps {
   session: SessionState
@@ -29,6 +30,9 @@ export function ActiveView({
   const isPaused = phase === 'paused'
   const isPomodoro = mode === 'pomodoro'
   const phaseLabel = pomodoroPhaseLabel(session)
+  const waveActive =
+    phase === 'playing' || phase === 'work' || phase === 'break'
+  const waveBreak = phase === 'break'
 
   return (
     <main className="shell active">
@@ -47,6 +51,8 @@ export function ActiveView({
             </p>
           </div>
         )}
+
+        <SoundWave active={waveActive} breakMode={waveBreak} />
 
         <div className="transport">
           {isPaused ? (

@@ -119,3 +119,69 @@ describe('App idle Start', () => {
     expect(screen.queryByText('00:00')).toBeNull()
   })
 })
+
+describe('App sound wave', () => {
+  beforeEach(() => {
+    localStorage.clear()
+    calls.length = 0
+    startImpl = async () => {
+      calls.push('start')
+    }
+  })
+
+  it('shows an active wave after start in continuous mode', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+    await user.click(screen.getByRole('button', { name: 'Start' }))
+    expect(await screen.findByText('00:00')).toBeTruthy()
+
+    const wave = screen.getByTestId('sound-wave')
+    expect(wave.classList.contains('is-active')).toBe(true)
+    expect(wave.classList.contains('is-break')).toBe(false)
+  })
+
+  it('freezes the wave when paused', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+    await user.click(screen.getByRole('button', { name: 'Start' }))
+    expect(await screen.findByText('00:00')).toBeTruthy()
+
+    await user.click(screen.getByRole('button', { name: 'Pause' }))
+    expect(await screen.findByRole('button', { name: 'Resume' })).toBeTruthy()
+
+    const wave = screen.getByTestId('sound-wave')
+    expect(wave.classList.contains('is-active')).toBe(false)
+  })
+
+  it('uses break modifier during an audible break', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+    await user.click(screen.getByLabelText('Pomodoro'))
+    await user.click(screen.getByRole('button', { name: 'Start' }))
+    expect(await screen.findByText('Work')).toBeTruthy()
+
+    await user.click(screen.getByRole('button', { name: 'Skip' }))
+    expect(await screen.findByText('Break')).toBeTruthy()
+
+    const wave = screen.getByTestId('sound-wave')
+    expect(wave.classList.contains('is-active')).toBe(true)
+    expect(wave.classList.contains('is-break')).toBe(true)
+  })
+
+  it('drops is-active on pause during break (no break duck while frozen)', async () => {
+    const user = userEvent.setup()
+    render(<App />)
+    await user.click(screen.getByLabelText('Pomodoro'))
+    await user.click(screen.getByRole('button', { name: 'Start' }))
+    expect(await screen.findByText('Work')).toBeTruthy()
+    await user.click(screen.getByRole('button', { name: 'Skip' }))
+    expect(await screen.findByText('Break')).toBeTruthy()
+
+    await user.click(screen.getByRole('button', { name: 'Pause' }))
+    expect(await screen.findByRole('button', { name: 'Resume' })).toBeTruthy()
+
+    const wave = screen.getByTestId('sound-wave')
+    expect(wave.classList.contains('is-active')).toBe(false)
+    expect(wave.classList.contains('is-break')).toBe(false)
+  })
+})
