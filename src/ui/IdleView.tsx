@@ -23,7 +23,9 @@ export function IdleView({
     <main className="shell idle">
       <div className="idle-compose">
         <h1 className="brand">Momentone</h1>
-        <p className="purpose">Focus soundscapes for deep work.</p>
+        <p className="purpose">
+          Live generative soundscapes for deep work.
+        </p>
 
         <div className="prefs-block">
           <label className="toggle-row">
