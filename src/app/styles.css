@@ -262,7 +262,7 @@ button:disabled {
   width: 3px;
   height: 100%;
   border-radius: var(--radius-xs);
-  background: var(--color-ink-muted-48);
+  background: var(--color-primary);
   transform-origin: center center;
   transform: scaleY(0.25);
 }
