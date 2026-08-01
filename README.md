@@ -1,6 +1,6 @@
 # Momentone
 
-Focus soundscapes + Pomodoro for ADHD-friendly deep work.
+Focus soundscapes + Pomodoro for deep work.
 
 Product and technical specs:
 

@@ -9,21 +9,23 @@
 
 ## 1. Summary
 
-Momentone is a web app for ADHD-friendly deep work: **research-informed focus soundscapes** plus a **Pomodoro timer**. v1 is a workshop demo — generative audio in the browser, shareable via a public URL, no accounts.
+Momentone is a web app for **deep work**: research-informed focus soundscapes plus a Pomodoro timer.
 
-Name: **momentum + tone** (Tone.js-powered audio).
+The project is personally motivated by the author’s ADHD and difficulty sustaining focus. The same design — low-distraction audio and clear work/break structure — should also help anyone who wants deeper focus blocks. It is not an ADHD-only or medical product.
+
+Name: **momentum + tone**.
 
 ## 2. Problem
 
-Starting and sustaining focus is hard with ADHD. Playlist apps interrupt with skips, vocals, and novelty. Tools like Brain.fm help by providing purpose-built focus audio, but Momentone’s author wants a **personal, demable** version that also structures work with Pomodoro (work → break → work) instead of “press play and hope.”
+Starting and sustaining deep work is hard for many people, and especially hard with ADHD: attention drifts, starting is costly, and ordinary music often pulls focus instead of holding it. Purpose-built focus audio (e.g. Brain.fm) helps the author stay in flow, but they want a **personal version they can demo** that also structures work with Pomodoro (work → break → work) instead of “press play and hope.”
 
 ## 3. Goals
 
 1. Let a user start a focus session in one gesture and stay in a work/break loop without managing a playlist.
 2. Provide continuous, non-distracting focus audio with a controllable **modulation depth** inspired by published amplitude-modulation research.
 3. On breaks, keep the **same** soundscape at lower volume so continuity is preserved without deep-focus intensity.
-4. Ship a shareable web demo for a workshop (author + a few peers) on a free hosting tier.
-5. Stay honest: research-informed product, **not** a medical device or ADHD treatment.
+4. Ship a web app suitable for a workshop tryout (author + a few peers) on a free hosting tier.
+5. Stay honest: research-informed product for focus and deep work — **not** a medical device or treatment for any condition.
 
 ## 4. Non-goals (v1)
 
@@ -33,12 +35,14 @@ Starting and sustaining focus is hard with ADHD. Playlist apps interrupt with sk
 - Native apps, mandatory offline/PWA
 - Clinical claims, diagnosis support, or “Brain.fm clone” patent-equivalent claims
 - Paid third-party music APIs (e.g. Suno) in v1
+- Marketing as an ADHD-only or accessibility-prescription product
 
 ## 5. Users & context
 
 | Persona | Need |
 |---------|------|
-| **Author (primary)** | Reliable focus companion for personal work; demo for workshop |
+| **Author (primary)** | ADHD-informed personal focus companion; workshop demo |
+| **Deep-work user** | Same low-distraction audio + timer, with or without ADHD |
 | **Workshop peer** | Open a link, try a session, no setup |
 
 **Constraints:** Demo audience is small; prefer free-tier services; implementation happens in a later session.
@@ -72,7 +76,7 @@ Starting and sustaining focus is hard with ADHD. Playlist apps interrupt with sk
 | F5 | Controls: play/pause, skip phase, master volume, modulation depth; optional Soft / Standard / Strong texture preset |
 | F6 | Break audio: same graph, quieter (not silence, not a second mode) |
 | F7 | Persist prefs in `localStorage` |
-| F8 | Deploy as static site; shareable URL; no auth |
+| F8 | Deploy as a static site; no auth |
 | F9 | Clear message if Web Audio is unsupported |
 | F10 | Product copy must not claim medical treatment or guaranteed clinical outcomes |
 
@@ -80,7 +84,7 @@ Starting and sustaining focus is hard with ADHD. Playlist apps interrupt with sk
 
 | Phase | Audio source | Notes |
 |-------|--------------|--------|
-| **v1** | Procedural / generative (Tone.js) | Free; infinite sessions; iterate by ear |
+| **v1** | Procedural / generative (in-browser) | Free; infinite sessions; iterate by ear |
 | **v1.5 (optional)** | A few curated seamless loops as static files | Free RF packs or self-made files under `/public/beds/`; **no backend required** for a small set |
 | **Later (optional)** | AI-assisted beds (e.g. paid Suno) | Only if desired; still can host as static assets until scale demands otherwise |
 
@@ -90,16 +94,16 @@ Starting and sustaining focus is hard with ADHD. Playlist apps interrupt with sk
 
 - Prefer **non-attention-grabbing** beds (stable harmony, limited novelty, filtered highs) over typical playlist music.
 - Offer **amplitude modulation depth** in a focus-oriented rate range (~12–20 Hz band used in published functional-music work), user-controllable so individuals can tune comfort vs intensity.
-- Combine audio with **external structure** (Pomodoro), which helps ADHD workflows even when audio alone is imperfect.
+- Combine audio with **external structure** (Pomodoro) so focus has a clear start, sustain, and recovery rhythm.
 
 **Evidence we lean on (high level)**
 
-- Functional music with rapid amplitude modulation has been studied for sustained attention; effects can be stronger for listeners with higher ADHD symptom scores (e.g. Woods et al., *Communications Biology*, 2024 — rapid modulation in music).
-- Brain.fm publicly describes neural phase-locking via modulation embedded in music and argues this is distinct from (and stronger than) classic binaural-beat approaches. Momentone is **inspired by** that class of technique, not a reimplementation of any proprietary stack.
+- Functional music with rapid amplitude modulation has been studied for sustained attention across listeners; some work reports larger gains for people with higher ADHD symptom scores (e.g. Woods et al., *Communications Biology*, 2024). That supports inclusive design (modulation + low distraction), not an ADHD-only product.
+- Brain.fm publicly describes neural phase-locking via modulation embedded in music and argues this is distinct from classic binaural-beat approaches. Momentone is **inspired by** that class of technique, not a reimplementation of any proprietary stack.
 
 **What we do not claim**
 
-- Momentone does not diagnose, treat, or cure ADHD.
+- Momentone does not diagnose, treat, or cure ADHD or any other condition.
 - Momentone does not claim equivalence to Brain.fm’s patented systems or published effect sizes.
 - Binaural beats are **not** the core product story (evidence is mixed); optional experiments must not dominate marketing copy.
 
@@ -109,7 +113,7 @@ Starting and sustaining focus is hard with ADHD. Playlist apps interrupt with sk
 - At least one workshop peer can use the deployed link with no install steps.
 - Low vs high modulation depth is audibly different.
 - Break ducking is obvious but continuous (same texture, quieter).
-- Copy and README state non-medical positioning clearly.
+- Copy and README state non-medical, deep-work positioning clearly.
 
 ## 12. Roadmap
 

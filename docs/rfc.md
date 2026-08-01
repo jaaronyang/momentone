@@ -115,7 +115,7 @@ Single composition, session-first:
 - Idle: brand **Momentone**, short line of purpose, duration prefs, Start
 - Active: large timer, phase label (Work / Break), play/pause, skip, volume, modulation, optional texture
 
-Keep chrome minimal during focus (ADHD-friendly: few competing controls).
+Keep chrome minimal during focus (few competing controls; deep-work friendly).
 
 ### 4.6 Deploy
 
