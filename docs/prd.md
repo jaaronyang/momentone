@@ -9,23 +9,24 @@
 
 ## 1. Summary
 
-Momentone is a web app for **deep work**: research-informed focus soundscapes plus a Pomodoro timer.
+Momentone is a web app for **deep work**: research-informed focus soundscapes, with an **optional** Pomodoro timer.
 
-The project is personally motivated by the author’s ADHD and difficulty sustaining focus. The same design — low-distraction audio and clear work/break structure — should also help anyone who wants deeper focus blocks. It is not an ADHD-only or medical product.
+The project is personally motivated by the author’s ADHD and difficulty sustaining focus. The same design — low-distraction audio and optional work/break structure — should also help anyone who wants deeper focus blocks. It is not an ADHD-only or medical product.
 
 Name: **momentum + tone**.
 
 ## 2. Problem
 
-Starting and sustaining deep work is hard for many people, and especially hard with ADHD: attention drifts, starting is costly, and ordinary music often pulls focus instead of holding it. Purpose-built focus audio (e.g. Brain.fm) helps the author stay in flow, but they want a **personal version they can demo** that also structures work with Pomodoro (work → break → work) instead of “press play and hope.”
+Starting and sustaining deep work is hard for many people, and especially hard with ADHD: attention drifts, starting is costly, and ordinary music often pulls focus instead of holding it. Purpose-built focus audio (e.g. Brain.fm) helps, but it is a paid service. Momentone is a **simple alternative**: research-informed focus soundscapes the author can run themselves, with an optional Pomodoro timer (work → break → work) when they want that structure — instead of “press play and hope” on a commercial playlist.
 
 ## 3. Goals
 
-1. Let a user start a focus session in one gesture and stay in a work/break loop without managing a playlist.
-2. Provide continuous, non-distracting focus audio with a controllable **modulation depth** inspired by published amplitude-modulation research.
-3. On breaks, keep the **same** soundscape at lower volume so continuity is preserved without deep-focus intensity.
-4. Ship a web app suitable for a workshop tryout (author + a few peers) on a free hosting tier.
-5. Stay honest: research-informed product for focus and deep work — **not** a medical device or treatment for any condition.
+1. Let a user start focus audio in one gesture and keep it playing indefinitely until they pause or stop.
+2. Let a user optionally enable Pomodoro and stay in a work/break loop without managing a playlist.
+3. Provide continuous, non-distracting focus audio with a controllable **modulation depth** inspired by published amplitude-modulation research.
+4. When Pomodoro is on and a break starts, keep the **same** soundscape at lower volume so continuity is preserved without deep-focus intensity.
+5. Ship a web app suitable for a workshop tryout (author + a few peers) on a free hosting tier.
+6. Stay honest: research-informed product for focus and deep work — **not** a medical device or treatment for any condition.
 
 ## 4. Non-goals (v1)
 
@@ -36,49 +37,60 @@ Starting and sustaining deep work is hard for many people, and especially hard w
 - Clinical claims, diagnosis support, or “Brain.fm clone” patent-equivalent claims
 - Paid third-party music APIs (e.g. Suno) in v1
 - Marketing as an ADHD-only or accessibility-prescription product
+- Requiring a timer to use the audio
 
 ## 5. Users & context
 
 | Persona | Need |
 |---------|------|
 | **Author (primary)** | ADHD-informed personal focus companion; workshop demo |
-| **Deep-work user** | Same low-distraction audio + timer, with or without ADHD |
+| **Deep-work user** | Low-distraction audio, with or without a timer, with or without ADHD |
 | **Workshop peer** | Open a link, try a session, no setup |
 
 **Constraints:** Demo audience is small; prefer free-tier services; implementation happens in a later session.
 
 ## 6. User stories
 
-1. As a user, I can open the site, press Start, and hear focus audio while a work timer runs.
-2. As a user, I can set work and break durations (defaults 25 / 5 minutes).
-3. As a user, I can adjust volume and modulation depth during a session without losing the timer.
-4. When a work block ends, I get a clear phase change and the audio becomes quieter for the break (same texture).
-5. When a break ends, work intensity returns and the next work block starts.
-6. As a user, I can pause/resume and skip to the next phase.
-7. As a returning user on the same browser, my duration and control prefs are remembered (`localStorage`).
+1. As a user, I can open the site, press Start, and hear focus audio play indefinitely (no timer required).
+2. As a user, I can turn Pomodoro on or off; when off, no countdown or phase changes run.
+3. As a user, when Pomodoro is on, I can set work and break durations (defaults 25 / 5 minutes).
+4. As a user, I can adjust volume and modulation depth during playback without interrupting the sound (or the timer, if enabled).
+5. When Pomodoro is on and a work block ends, I get a clear phase change and the audio becomes quieter for the break (same texture).
+6. When a break ends, work intensity returns and the next work block starts.
+7. As a user, I can pause/resume; when Pomodoro is on, I can also skip to the next phase.
+8. As a returning user on the same browser, my prefs (including Pomodoro on/off) are remembered (`localStorage`).
 
-## 7. Primary flow
+## 7. Primary flows
 
-1. Land on idle screen → set optional prefs → **Start session** (user gesture unlocks audio).
-2. **Work:** generative focus at chosen intensity; countdown visible.
+**A. Continuous play (default path)**
+
+1. Land on idle screen → optional prefs → **Start** (user gesture unlocks audio).
+2. Focus audio plays at chosen intensity with no countdown.
+3. User may pause, resume, adjust controls, or stop at any time.
+
+**B. Pomodoro (optional)**
+
+1. Enable Pomodoro → set optional durations → **Start**.
+2. **Work:** focus audio at work level; countdown visible.
 3. Phase end → optional soft cue → **Break:** same engine, ducked volume.
 4. Break end → next **Work**.
-5. User may pause, skip phase, or end session at any time.
+5. User may pause, skip phase, disable Pomodoro (return to continuous play), or stop.
 
 ## 8. Functional requirements
 
 | ID | Requirement |
 |----|-------------|
 | F1 | Single mode: **Focus** |
-| F2 | Pomodoro phases: idle → work → break → work…; configurable work/break lengths |
-| F3 | Defaults: 25 min work, 5 min break |
-| F4 | Generative in-browser focus soundscape (no media library required for v1) |
-| F5 | Controls: play/pause, skip phase, master volume, modulation depth; optional Soft / Standard / Strong texture preset |
-| F6 | Break audio: same graph, quieter (not silence, not a second mode) |
-| F7 | Persist prefs in `localStorage` |
-| F8 | Deploy as a static site; no auth |
-| F9 | Clear message if Web Audio is unsupported |
-| F10 | Product copy must not claim medical treatment or guaranteed clinical outcomes |
+| F2 | Playback modes: **continuous** (indefinite) and **Pomodoro** (optional); user can choose either |
+| F3 | When Pomodoro is on: phases idle → work → break → work…; configurable work/break lengths |
+| F4 | Pomodoro defaults: 25 min work, 5 min break |
+| F5 | Generative in-browser focus soundscape (no media library required for v1) |
+| F6 | Controls: play/pause, master volume, modulation depth; optional Soft / Standard / Strong texture preset; skip phase only when Pomodoro is on |
+| F7 | When Pomodoro break is active: same graph, quieter (not silence, not a second mode) |
+| F8 | Persist prefs in `localStorage` (including Pomodoro on/off) |
+| F9 | Deploy as a static site; no auth |
+| F10 | Clear message if Web Audio is unsupported |
+| F11 | Product copy must not claim medical treatment or guaranteed clinical outcomes |
 
 ## 9. Content strategy
 
@@ -94,7 +106,7 @@ Starting and sustaining deep work is hard for many people, and especially hard w
 
 - Prefer **non-attention-grabbing** beds (stable harmony, limited novelty, filtered highs) over typical playlist music.
 - Offer **amplitude modulation depth** in a focus-oriented rate range (~12–20 Hz band used in published functional-music work), user-controllable so individuals can tune comfort vs intensity.
-- Combine audio with **external structure** (Pomodoro) so focus has a clear start, sustain, and recovery rhythm.
+- Offer **optional external structure** (Pomodoro) for users who want a clear start, sustain, and recovery rhythm — without requiring it for audio playback.
 
 **Evidence we lean on (high level)**
 
@@ -109,17 +121,18 @@ Starting and sustaining deep work is hard for many people, and especially hard w
 
 ## 11. Success criteria (v1 demo)
 
-- Author completes at least one full **work → break → work** cycle without fighting the UI.
+- Author can play focus audio indefinitely without enabling Pomodoro.
+- Author completes at least one full **work → break → work** cycle with Pomodoro on without fighting the UI.
 - At least one workshop peer can use the deployed link with no install steps.
 - Low vs high modulation depth is audibly different.
-- Break ducking is obvious but continuous (same texture, quieter).
+- With Pomodoro on, break ducking is obvious but continuous (same texture, quieter).
 - Copy and README state non-medical, deep-work positioning clearly.
 
 ## 12. Roadmap
 
 | Version | Scope |
 |---------|--------|
-| **v1** | Generative Focus + Pomodoro + static deploy (workshop demo) |
+| **v1** | Generative Focus + optional Pomodoro + static deploy (workshop demo) |
 | **v1.5** | Optional static curated beds into the same FX path |
 | **Later** | Extra modes, auth, paid AI content, native — only if product direction expands |
 
@@ -128,6 +141,7 @@ Starting and sustaining deep work is hard for many people, and especially hard w
 - Exact Soft / Standard / Strong preset tunings (decide during implementation listen passes).
 - Host: Cloudflare Pages vs Vercel (both acceptable free tiers; pick at deploy time).
 - Whether a long-break every N cycles is worth a tiny addition after the demo.
+- Default for Pomodoro on first visit: off (continuous) vs on — recommend **off** so audio-first matches Brain.fm-like use.
 
 ## 14. Doc map
 

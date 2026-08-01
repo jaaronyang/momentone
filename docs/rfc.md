@@ -9,7 +9,7 @@
 
 ## 1. Summary
 
-Build Momentone as a **static Vite + React + TypeScript** web app. Audio is a **Tone.js** graph: generative focus sources through a shared FX bus (warmth filter + amplitude modulation), with Pomodoro-driven **break ducking**. No backend for v1. Optional curated beds later attach as samples into the same bus and can ship as static files.
+Build Momentone as a **static Vite + React + TypeScript** web app. Audio is a **Tone.js** graph: generative focus sources through a shared FX bus (warmth filter + amplitude modulation). **Pomodoro is optional**: continuous play keeps audio at work level with no timer; when Pomodoro is enabled, the session FSM drives work/break and **break ducking**. No backend for v1. Optional curated beds later attach as samples into the same bus and can ship as static files.
 
 ## 2. Motivation
 
@@ -25,7 +25,7 @@ See the [PRD](./prd.md) for product goals. Technically we need:
 **Goals**
 
 - Client-only architecture; zero required server APIs for v1
-- Testable Pomodoro state machine independent of React and Tone
+- Testable session state machine (continuous + Pomodoro) independent of React and Tone
 - Shared FX path for generative and future sample sources
 - Sensible handling of AudioContext suspend / background tabs
 
@@ -42,9 +42,9 @@ See the [PRD](./prd.md) for product goals. Technically we need:
 
 ```mermaid
 flowchart LR
-  UI[React_UI] --> Session[Pomodoro_FSM]
+  UI[React_UI] --> Session[Session_FSM]
   UI --> Audio[Tone_AudioEngine]
-  Session -->|phase_and_duck| Audio
+  Session -->|"optional_phase_and_duck"| Audio
   subgraph sources [Sources]
     Gen[GenerativeBed]
     Sample[SampleBed_later]
@@ -59,7 +59,7 @@ Suggested source layout:
 ```text
 src/
   audio/          # Tone graph: engine, sources, fx — no React
-  session/        # Pomodoro FSM + pure helpers
+  session/        # Playback + optional Pomodoro FSM — pure helpers
   ui/             # React pages/components binding controls
   app/            # shell, routing if any (single view is fine)
 ```
@@ -75,9 +75,10 @@ src/
 2. **Shared FX bus**
    - Low-pass / warmth to reduce distracting highs
    - Amplitude modulator: user **depth** 0–100%; rate in a focus-oriented band (~12–20 Hz), tunable in code/presets
-3. **Master gain** + Pomodoro ducking
-   - Work: nominal level
-   - Break: same graph, lower master/bus gain (PRD: continuity, quieter)
+3. **Master gain** + optional Pomodoro ducking
+   - Continuous play / Pomodoro work: nominal level
+   - Pomodoro break: same graph, lower master/bus gain (PRD: continuity, quieter)
+   - Continuous play never enters break ducking
 
 **Libraries:** Tone.js over Web Audio.
 
@@ -91,29 +92,42 @@ src/
 - Host a few seamless loops under `public/beds/*` on the static host.
 - **No backend required** for a small fixed library. Introduce object storage or an API only if uploads, large catalogs, or gated assets appear later.
 
-### 4.4 Pomodoro session module
+### 4.4 Session module (continuous + optional Pomodoro)
 
-Pure TypeScript state machine, no Tone imports:
+Pure TypeScript state machine, no Tone imports.
+
+**Playback modes**
+
+| Mode | Behavior |
+|------|----------|
+| `continuous` | Audio playing; no countdown; no phase changes; ducking off |
+| `pomodoro` | Timer active; work/break phases; break ducking on |
+
+Recommend default **continuous** (Pomodoro off) on first visit; persist the user’s choice.
 
 | State | Behavior |
 |-------|----------|
 | `idle` | Prefs editable; audio stopped or silent |
-| `work` | Countdown; audio at work level |
-| `break` | Countdown; audio ducked |
-| `paused` | Timer frozen; audio paused or held per UX choice (prefer pause both) |
+| `playing` | Continuous mode: audio at work level, no timer |
+| `work` | Pomodoro: countdown; audio at work level |
+| `break` | Pomodoro: countdown; audio ducked |
+| `paused` | Timer frozen if any; audio paused (prefer pause both) |
 
-Events: `start`, `pause`, `resume`, `skipPhase`, `tick` / deadline reached, `reset`.
+Events: `start`, `pause`, `resume`, `setPomodoro(on/off)`, `skipPhase` (Pomodoro only), `tick` / deadline reached, `reset`.
 
-Defaults: work **25m**, break **5m** (from prefs). Persist prefs via `localStorage` in the UI layer.
+When Pomodoro is enabled mid-session: enter `work` with a fresh work duration (or remaining policy decided in implementation — prefer fresh work block). When disabled mid-session: leave break/work timer, keep audio playing in continuous mode at work level.
 
-**Timer accuracy:** Prefer wall-clock deadlines (`Date.now()` + duration) over `setInterval` alone so background-tab throttling drifts less. Reconcile on `visibilitychange`. Document remaining Safari/Chrome quirks as known limitations for the demo.
+Defaults when Pomodoro is on: work **25m**, break **5m** (from prefs). Persist prefs via `localStorage` in the UI layer.
+
+**Timer accuracy (Pomodoro only):** Prefer wall-clock deadlines (`Date.now()` + duration) over `setInterval` alone so background-tab throttling drifts less. Reconcile on `visibilitychange`. Document remaining Safari/Chrome quirks as known limitations for the demo.
 
 ### 4.5 UI
 
 Single composition, session-first:
 
-- Idle: brand **Momentone**, short line of purpose, duration prefs, Start
-- Active: large timer, phase label (Work / Break), play/pause, skip, volume, modulation, optional texture
+- Idle: brand **Momentone**, short line of purpose, **Pomodoro toggle**, duration prefs (visible/enabled when Pomodoro is on), Start
+- Active (continuous): play/pause, volume, modulation, optional texture — no countdown chrome
+- Active (Pomodoro): large timer, phase label (Work / Break), play/pause, skip, volume, modulation, optional texture
 
 Keep chrome minimal during focus (few competing controls; deep-work friendly).
 
@@ -150,15 +164,18 @@ Keep chrome minimal during focus (few competing controls; deep-work friendly).
 
 **Automated (lightweight)**
 
-- Unit tests for Pomodoro FSM: transitions, skip, pause/resume, duration boundaries
+- Unit tests for session FSM: continuous play, Pomodoro on/off, transitions, skip, pause/resume, duration boundaries
 
 **Manual listen checklist**
 
 - [ ] Start requires gesture; sound begins
+- [ ] Continuous play has no timer UI / no auto break
+- [ ] Enabling Pomodoro shows timer and runs work → break duck
+- [ ] Disabling Pomodoro returns to indefinite play at work level
 - [ ] Modulation depth low vs high is audible
 - [ ] Work → break ducks volume; texture continuous
 - [ ] Break → work restores level
-- [ ] Pause/resume keeps phase and audio coherent
+- [ ] Pause/resume keeps audio (and phase if Pomodoro) coherent
 - [ ] Prefs survive reload
 - [ ] Deployed URL works for a second device/user
 

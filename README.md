@@ -1,6 +1,6 @@
 # Momentone
 
-Focus soundscapes + Pomodoro for deep work.
+Focus soundscapes for deep work, with an optional Pomodoro timer.
 
 Product and technical specs:
 
