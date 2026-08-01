@@ -308,7 +308,8 @@ button:disabled {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .sound-wave.is-active .sound-wave__bar {
+  .sound-wave.is-active .sound-wave__bar,
+  .sound-wave.is-active.is-break .sound-wave__bar {
     animation: none;
     transform: scaleY(0.28);
   }
