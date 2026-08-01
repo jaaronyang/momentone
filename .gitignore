@@ -26,3 +26,4 @@ dist-ssr
 # Local agent / worktree scratch (not source)
 .worktrees/
 .superpowers/
+docs/superpowers/

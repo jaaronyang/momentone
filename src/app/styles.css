@@ -418,7 +418,7 @@ button:disabled {
 .btn-secondary {
   padding: 8px 14px;
   min-height: 40px;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-pill);
   background: var(--color-surface-pearl);
   color: var(--color-ink-muted-80);
   border: 3px solid var(--color-divider-soft);
