@@ -11,6 +11,7 @@
 
 ## Notes
 
+- Commits: [Conventional Commits](https://www.conventionalcommits.org/) (`feat:`, `fix:`, `docs:`, `chore:`, …)
 - Specs: `docs/prd.md` (product), `docs/rfc.md` (technical)
 - Session logic is pure TS under `src/session` — prefer extending tests there
 - Audio (`src/audio`) requires a real browser + user gesture; do not expect Tone to fully run in Vitest/jsdom

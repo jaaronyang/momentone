@@ -8,8 +8,8 @@ export const DEFAULT_PREFS: SessionPrefs = {
   pomodoroEnabled: false,
   workMinutes: 25,
   breakMinutes: 5,
-  volume: 0.7,
-  modulationDepth: 0.45,
+  volume: 1,
+  modulationDepth: 0.5,
   texture: 'standard',
 }
 

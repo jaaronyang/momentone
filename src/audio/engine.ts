@@ -15,7 +15,7 @@ export class AudioEngine {
   private bed: GenerativeBed | null = null
   private master: Gain | null = null
 
-  private volume = 0.7
+  private volume = 1
   private modulationDepth = 0
   private ducking = false
   private paused = false

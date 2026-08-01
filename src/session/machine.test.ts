@@ -6,7 +6,7 @@ const prefs: SessionPrefs = {
   pomodoroEnabled: false,
   workMinutes: 25,
   breakMinutes: 5,
-  volume: 0.7,
+  volume: 1,
   modulationDepth: 0.5,
   texture: 'standard',
 }
