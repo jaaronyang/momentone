@@ -30,13 +30,6 @@ export function ActiveView({
 
   return (
     <main className="shell active">
-      <header className="active-header">
-        <p className="brand-sm">Momentone</p>
-        <button type="button" className="btn-tertiary" onClick={onReset}>
-          End
-        </button>
-      </header>
-
       <div className="active-compose">
         {isPomodoro && (
           <div className="timer-block">
@@ -66,6 +59,9 @@ export function ActiveView({
               Skip
             </button>
           )}
+          <button type="button" className="btn-secondary" onClick={onReset}>
+            End
+          </button>
         </div>
 
         <div className="controls">

@@ -121,15 +121,6 @@ button:disabled {
   color: var(--color-primary);
 }
 
-.brand-sm {
-  margin: 0;
-  font-family: var(--font-sans);
-  font-size: var(--text-body-sm-size);
-  font-weight: 500;
-  letter-spacing: 0;
-  color: var(--color-primary);
-}
-
 .purpose {
   margin: var(--space-base) 0 0;
   max-width: 28rem;
@@ -185,13 +176,6 @@ button:disabled {
 }
 
 /* —— Active —— */
-.active-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: var(--space-xxl);
-}
-
 .active-compose {
   width: min(100%, 28rem);
   margin: 0 auto;
@@ -305,8 +289,7 @@ button:disabled {
 
 /* —— Buttons —— */
 .btn-primary,
-.btn-secondary,
-.btn-tertiary {
+.btn-secondary {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -353,18 +336,6 @@ button:disabled {
 
 .btn-secondary:hover {
   border-color: var(--color-hairline-strong);
-}
-
-.btn-tertiary {
-  background: transparent;
-  color: var(--color-ink);
-  border-color: transparent;
-  height: auto;
-  padding: var(--space-xs) var(--space-sm);
-}
-
-.btn-tertiary:hover {
-  color: var(--color-muted);
 }
 
 .transport .btn-primary,
